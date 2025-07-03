@@ -1,0 +1,150 @@
+{% extends 'layout.html' %}
+
+{% block title %}Transactions - Expense Tracker{% endblock %}
+
+{% block header_scripts %}
+<link href="https://unpkg.com/bootstrap-table@1.22.1/dist/bootstrap-table.min.css" rel="stylesheet">
+<script src="https://unpkg.com/bootstrap-table@1.22.1/dist/bootstrap-table.min.js"></script>
+{% endblock %}
+
+
+{% block content %}
+<h2>Transaction List</h2>
+
+<div id="drop-area" class="mb-4 p-2 border border-primary rounded text-center" style="background: #f9f9f9;">
+    <p>Drag & drop your Royal Bank of Canada CSV file</p>
+  </div>
+
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Transactions</h2>
+    <div>
+      <label for="monthFilter" class="me-2">Filter by Month:</label>
+      <select id="monthFilter" class="form-select d-inline-block w-auto">
+        <option value="all">All Months</option>
+      </select>
+    </div>
+  </div>
+
+  <div id="loadingSpinner" class="d-flex justify-content-center align-items-center" style="height: 150px;">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+
+  <table id="transactionTable"
+       class="table table-striped d-none"
+       data-toggle="table"
+       data-search="true"
+       data-url="/transactions/get"
+       data-pagination="true"
+       data-page-size="20"
+       data-stable-columns="true"
+       data-show-footer="true"
+       data-unique-id="id"
+       data-page-list="[20, 50, 100, All]"
+       data-sortable="true">
+
+  <thead>
+    <tr>
+      <th data-field="id" data-visible="false">ID</th>
+      <th data-field="account_type" data-sortable="true">Account Type</th>
+      <th data-field="transaction_date" data-sortable="true">Transaction Date</th>
+      <th data-field="description" data-sortable="true" data-formatter="descriptionFormatter">Description</th>
+      <th data-field="amount" data-sortable="true" data-footer-formatter="totalAmountFormatter" data-formatter="amountFormatter" data-align="right">Amount</th>
+      <th data-field="category" data-sortable="true" data-formatter="categoryFormatter">Category</th>
+      <th data-field="actions" data-formatter="actionFormatter" data-align="center" data-events="actionEvents">Actions</th>
+    </tr>
+  </thead>
+</table>
+
+<h4 class="mt-4">Add New Transaction</h4>
+<div class="row g-3 mb-4">
+  <div class="col-md-2">
+    <label for="accountType" class="form-label">Account Type</label>
+    <select id="accountType" class="form-select">
+      <option value="Savings">Savings</option>
+      <option value="Visa">Visa</option>
+      <option value="Checking">Checking</option>
+    </select>
+  </div>
+  <div class="col-md-2">
+    <label for="transactionDate" class="form-label">Transaction Date</label>
+    <input type="date" id="transactionDate" class="form-control">
+  </div>
+  <div class="col-md-3">
+    <label for="description" class="form-label">Description</label>
+    <input type="text" id="description" class="form-control">
+  </div>
+  <div class="col-md-2">
+    <label for="amount" class="form-label">Amount</label>
+    <input type="text" id="amount" class="form-control">
+  </div>
+  <div class="col-md-2">
+    <label for="category" class="form-label">Category</label>
+    <select id="category" class="form-select">
+      {% for cat in categories %}
+          <option value="{{ cat.id }}">
+            {{ cat.name }}
+          </option>
+          {% for sub in cat.subcategories %}
+            <option value="{{ sub.id }}">
+              &nbsp;&nbsp;&#10551; {{ sub.name }}
+            </option>
+          {% endfor %}
+        {% endfor %}
+    </select>
+  </div>
+  <div class="col-md-1 align-self-end">
+    <button class="btn btn-primary w-100" onclick="addTransaction()">Add</button>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block footer_scripts %}
+<link href="{{ url_for('static', filename='css/index.css') }}" rel="stylesheet">
+<script src="{{ url_for('static', filename='js/index.js') }}"></script>
+
+<script>
+const categories = {{ categories | tojson | safe }};
+let selectedMonth = "all";
+let searchText = "";
+
+loadMonthOptions();
+
+document.getElementById("monthFilter").addEventListener("change", e => {
+  selectedMonth = e.target.value;
+  $('#transactionTable').bootstrapTable('resetSearch', searchText);
+});
+
+$('#transactionTable').bootstrapTable({
+  ajaxOptions: {
+            headers: {
+                'X-Session-Token': SESSION_TOKEN
+            }
+        },
+  search: true,
+  customSearch: function(data, text) {
+    searchText = text.toLowerCase();
+
+    return data.filter(row => {
+      const matchesMonth = selectedMonth === "all" || row.transaction_date.startsWith(selectedMonth);
+
+      const combinedText = [
+        row.description,
+        row.category_name,
+        row.account_type
+      ].join(" ").toLowerCase();
+
+      const matchesText = searchText === "" || combinedText.includes(searchText);
+
+      return matchesMonth && matchesText;
+    });
+  }
+});
+</script>
+
+<style>
+  
+</style>
+{% endblock %}

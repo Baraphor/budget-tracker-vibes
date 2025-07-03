@@ -1,0 +1,8 @@
+#transactionTable.invisible {
+    opacity: 0;
+    transition: opacity 0.3s ease-in;
+}
+
+#transactionTable:not(.invisible) {
+    opacity: 1;
+}

@@ -1,0 +1,85 @@
+.budget-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin-top: 20px;
+}
+
+.budget-header, .budget-row {
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #ddd;
+    padding: 6px 0;
+}
+
+.budget-header {
+    background-color: #f8f9fa;
+    font-weight: bold;
+    border-radius: 6px;
+    margin-bottom: 10px;
+    padding: 8px;
+}
+
+.budget-row.parent-row {
+    margin-top: 10px;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.budget-row {
+    border-radius: 6px;
+    margin-top: 4px;
+}
+
+.budget-cell {
+    flex: 1;
+    padding: 4px 8px;
+    display: flex;
+    align-items: center;
+}
+
+.category-cell {
+    flex: 2;
+}
+
+.budget-row[data-parent-id] .category-cell {
+    padding-left: 20px;
+}
+
+.toggle-arrow {
+    margin-right: 5px;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.rotate-down {
+    transform: rotate(90deg);
+}
+
+.row-success {
+    background-color: #d4edda;
+}
+
+.row-warning {
+    background-color: #fff3cd;
+}
+
+.row-danger {
+    background-color: #f8d7da;
+}
+
+.text-danger {
+    color: red;
+}
+
+.text-warning {
+    color: orange;
+}
+
+.text-success {
+    color: green;
+}
+
+#budgetMonth {
+    margin-bottom: 20px;
+}

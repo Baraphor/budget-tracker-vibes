@@ -1,0 +1,11 @@
+version: "3"
+services:
+  web:
+    build: .
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./data:/app/data  # Maps your data folder for persistent DB storage
+    environment:
+      - DB_PATH=/app/data/transactions.db
+      - CONFIG_PATH=/app/data/settings.json

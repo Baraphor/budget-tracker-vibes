@@ -1,0 +1,41 @@
+.toggle-icon {
+    display: inline-block;
+    transition: transform 0.3s ease;
+    cursor: pointer;
+}
+
+.rotate-down {
+    transform: rotate(90deg);
+}
+
+.category-row, .subcategory-row {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem;
+    border: 1px solid #dee2e6;
+    border-top: none;
+}
+
+.category-header {
+    font-weight: bold;
+    background: #f8f9fa;
+    border-top: 1px solid #dee2e6;
+    padding: 0.5rem;
+}
+
+.category-actions {
+    margin-left: auto;
+}
+
+.subcategory-list {
+    margin-left: 1.5rem;
+    border-left: 2px solid #dee2e6;
+}
+
+.editable.form-control {
+    padding-right: 2rem;
+    flex-grow: 1;
+    min-width: 0;
+    margin-right: 0.5rem;
+}
+

@@ -1,0 +1,102 @@
+{% extends 'layout.html' %}
+
+{% block title %}Budget - Expense Tracker{% endblock %}
+
+{% macro render_row(row, categories, indent) %}
+    {% set children = categories | selectattr('parent_id', 'equalto', row.category_id) | list %}
+    {% set has_children = children | length > 0 %}
+    {% set budget = row.budget %}
+    {% set spent = row.spent %}
+
+    {% if has_children %}
+        {% set budget = children | map(attribute='budget') | sum %}
+        {% set spent = children | map(attribute='spent') | sum %}
+    {% endif %}
+
+    {% set diff = budget - spent %}
+    {% set diff_class = 'row-success' if diff >= 10 else 'row-warning' if diff >= 0 else 'row-danger' %}
+
+    <div class="budget-row {{ diff_class }} {% if row.parent_id %}d-none{% endif %} {% if has_children %}parent-row{% endif %}"
+         data-category-id="{{ row.category_id }}"
+         {% if row.parent_id %} data-parent-id="{{ row.parent_id | int }}" {% endif %}>
+
+        <div class="budget-cell category-cell" style="padding-left: {{ indent * 20 }}px">
+            {% if has_children %}
+                <i class="bi bi-chevron-right toggle-arrow"></i>
+            {% endif %}
+            {{ row.category }}
+        </div>
+
+        <div class="budget-cell">
+            {% if has_children %}
+                <b>${{ "%.2f"|format(budget) }}</b>
+            {% else %}
+                <input type="number" class="form-control budget-input" value="{{ "%.2f"|format(budget) }}" data-id="{{ row.category_id }}" onchange="updateBudget(this)" step="25">
+            {% endif %}
+        </div>
+
+        <div class="budget-cell">
+            {% if has_children %}
+                <button class="btn btn-sm btn-secondary" onclick="setParentBudget({{ row.category_id }})">Set Total</button>
+            {% endif %}
+        </div>
+
+        <div class="budget-cell">${{ "%.2f"|format(spent) }}</div>
+        <div class="budget-cell">${{ "%.2f"|format(diff) }}</div>
+    </div>
+
+    {% for child in children %}
+        {{ render_row(child, categories, indent + 1) }}
+    {% endfor %}
+{% endmacro %}
+
+{% block header_scripts %}
+{% endblock %}
+
+{% block content %}
+
+<h3>Budget</h3>
+
+<div class="col-md-4">
+    <label for="budgetMonth">Select Month:</label>
+    <select id="budgetMonth" class="form-control">
+        {% for m in months %}
+            <option value="{{ m }}" {% if m == month %}selected{% endif %}>{{ m }}</option>
+        {% endfor %}
+    </select>
+</div>
+
+<div id="budgetContainer" class="budget-container">
+    <div class="budget-header">
+        <div class="budget-cell category-cell">Category</div>
+        <div class="budget-cell">Budget</div>
+        <div class="budget-cell">Set Total</div>
+        <div class="budget-cell">Spent</div>
+        <div class="budget-cell">Difference</div>
+    </div>
+
+    {% for row in categories %}
+        {% if not row.parent_id %}
+            {{ render_row(row, categories, 0) }}
+        {% endif %}
+    {% endfor %}
+
+    <div id="budgetTotals" class="budget-row total-row">
+    <div class="budget-cell category-cell"><b>Totals</b></div>
+    <div class="budget-cell"><b id="totalBudget">$0.00</b></div>
+    <div class="budget-cell"></div>
+    <div class="budget-cell"><b id="totalSpent">$0.00</b></div>
+    <div class="budget-cell"><b id="totalDiff">$0.00</b></div>
+</div>
+</div>
+
+
+
+{% endblock %}
+
+{% include 'modals/setTotalModal.html' %}
+
+{% block footer_scripts %}
+<link href="{{ url_for('static', filename='css/budget.css') }}" rel="stylesheet">
+<script src="{{ url_for('static', filename='js/budget.js') }}"></script>
+{% endblock %}

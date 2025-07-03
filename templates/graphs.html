@@ -1,0 +1,54 @@
+{% extends 'layout.html' %}
+
+{% block title %}Graphs - Expense Tracker{% endblock %}
+
+{% block header_scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
+
+
+{% block content %}
+
+<select id="monthGraphFilter" class="form-select" onchange="loadCharts()">
+<option value="all">All Months</option>
+{% for m in months %}
+  <option value="{{ m }}">{{ m }}</option>
+{% endfor %}
+</select>
+
+<div class="row">
+    <div class="col-md-6 mb-4">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title">By Category</h5>
+          <canvas id="categoryGraph" height="300"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6 mb-4">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title" id="subcategoryTitle">Subcategories</h5>
+          <canvas id="subcategoryGraph" height="300"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6 mb-4">
+      <div class="container my-4">
+        <h4 class="mb-3">Income vs Expenses (Last 12 Months)</h4>
+        <canvas id="incomeExpenseChart" height="100"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block footer_scripts %}
+<link href="{{ url_for('static', filename='css/graphs.css') }}" rel="stylesheet">
+<script src="{{ url_for('static', filename='js/graphs.js') }}"></script>
+{% endblock %}
+

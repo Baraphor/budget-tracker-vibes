@@ -1,0 +1,80 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Virtual environments
+venv/
+.venv/
+env/
+.env/
+
+# Environment variables
+*.env
+
+# Flask instance folder
+instance/
+
+# Pytest / coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# VSCode settings
+.vscode/
+
+# Logs and temp files
+*.log
+*.tmp
+*.bak
+*.swp
+*.swo
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# MyPy cache
+.mypy_cache/
+
+# Build artifacts
+build/
+dist/
+*.egg-info/
+
+# Docker
+*.pid
+*.db
+docker-compose.override.yml
+
+# Database files
+*.sqlite3
+*.db
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Python compiled files
+*.pyo
+
+# Node modules (if you use npm for front-end)
+node_modules/
+
+# Test reports
+junit-*.xml
+
+# Coverage reports
+coverage.xml
+
+# Idea (if using JetBrains IDEs)
+.idea/
+
+# Backup files
+*.bak
+*.old
+
+# Exported data
+exports/

@@ -1,0 +1,54 @@
+{
+  "default_categories": [
+    { "name": "Unassigned" },
+
+    { "name": "Income" },
+    { "name": "Salary", "parent": "Income" },
+    { "name": "Benefits", "parent": "Income" },
+    { "name": "Interest Income", "parent": "Income" },
+    { "name": "Dividends", "parent": "Income" },
+    { "name": "Other", "parent": "Income" },
+
+    { "name": "Expenses" },
+    { "name": "Rent", "parent": "Expenses" },
+    { "name": "Utilities", "parent": "Expenses" },
+    { "name": "Internet", "parent": "Expenses" },
+    { "name": "Phone", "parent": "Expenses" },
+
+    { "name": "Transportation" },
+    { "name": "Gas", "parent": "Transportation" },
+    { "name": "Public Transit", "parent": "Transportation" },
+    { "name": "Taxi/Uber", "parent": "Transportation" },
+
+    { "name": "Food" },
+    { "name": "Groceries", "parent": "Food" },
+    { "name": "Restaurants", "parent": "Food" },
+    { "name": "Coffee", "parent": "Food" },
+
+    { "name": "Health" },
+    { "name": "Medical", "parent": "Health" },
+    { "name": "Pharmacy", "parent": "Health" },
+    { "name": "Dental", "parent": "Health" },
+
+    { "name": "Entertainment" },
+    { "name": "Movies", "parent": "Entertainment" },
+    { "name": "Streaming", "parent": "Entertainment" },
+    { "name": "Games", "parent": "Entertainment" },
+
+    { "name": "Personal Care" },
+    { "name": "Haircuts", "parent": "Personal Care" },
+    { "name": "Clothing", "parent": "Personal Care" },
+    { "name": "Gym", "parent": "Personal Care" },
+
+    { "name": "Savings & Investments" },
+    { "name": "RRSP", "parent": "Savings & Investments" },
+    { "name": "TFSA", "parent": "Savings & Investments" },
+    { "name": "Investments", "parent": "Savings & Investments" },
+
+    { "name": "Gifts & Donations" },
+    { "name": "Charity", "parent": "Gifts & Donations" },
+    { "name": "Gifts Given", "parent": "Gifts & Donations" },
+
+    { "name": "Other" }
+  ]
+}

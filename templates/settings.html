@@ -1,0 +1,22 @@
+{% extends 'layout.html' %}
+
+{% block title %}Settings - Expense Tracker{% endblock %}
+
+{% block header_scripts %}
+{% endblock %}
+
+{% block content %}
+
+<h3>Settings</h3>
+
+<div class="container">
+  <div class="container mt-3">
+      <button class="btn btn-danger" id="triggerDeleteAllBtn">Delete All Transactions</button>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block footer_scripts %}
+<script src="{{ url_for('static', filename='js/settings.js') }}"></script>
+{% endblock %}
