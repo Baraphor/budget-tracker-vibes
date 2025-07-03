@@ -375,5 +375,4 @@ app.jinja_env.globals.update(has_children=has_children)
 # ---------------- Run ----------------
 
 if __name__ == "__main__":
-    print("start up")
     app.run(host="0.0.0.0", port=5000, debug=True)
