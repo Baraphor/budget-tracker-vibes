@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, request, render_template, g
 from functools import wraps
 import storage
+import pandas as pd
 import secrets
 import time
 import validation
@@ -316,42 +317,57 @@ def get_income_expense():
     return jsonify(summary)
 
 # ---------------- Uploads ----------------
-
 @app.route("/upload", methods=["POST"])
 @require_session_token
 def upload():
     try:
-        file = request.files.get("file")
+        file = request.files.get("csv_file")
         if not file:
-            app.logger.warning("No file uploaded")
             return jsonify({"success": False, "error": "No file uploaded"}), 400
 
         if not file.filename.endswith(".csv"):
-            app.logger.warning("Invalid file type")
             return jsonify({"success": False, "error": "Invalid file type"}), 400
 
-        contents = file.read().decode("utf-8", errors="ignore")
-        rows = contents.splitlines()
-
-        header = rows[0].split(",")
-        expected_columns = ["Account Type", "Account Number", "Transaction Date", "Cheque Number", "Description 1", "Description 2", "CAD$", "USD$"]
-
-        if header != expected_columns:
-            app.logger.warning("CSV header mismatch")
+        try:
+            df = uploads_service.parse_uploaded_csv(file)
+        except Exception as e:
+            app.logger.warning(f"CSV parsing failed: {e}")
             return jsonify({"success": False, "error": "Invalid CSV format"}), 400
 
-        for line in rows[1:]:
-            fields = line.split(",")
-            if len(fields) != len(expected_columns):
-                app.logger.warning("Malformed CSV row detected")
-                return jsonify({"success": False, "error": "Malformed CSV data"}), 400
+        if df.empty:
+            return jsonify({"success": False, "error": "CSV is empty or invalid"}), 400
 
-            if not validation.validate_date(fields[2]) or not validation.validate_number(fields[-1]):
-                app.logger.warning("Invalid data in CSV row")
-                return jsonify({"success": False, "error": "Invalid data in CSV"}), 400
+        invalid_rows = []
+        for _, row in df.iterrows():
+            date_obj = row["transaction_date"]
+            amount = str(row["amount"]).strip()
 
-        app.logger.info("CSV file validated and ready for processing")
-        return jsonify({"success": True})
+            if pd.isna(date_obj):
+                app.logger.warning(f"Missing or invalid date: {row.to_dict()}")
+                invalid_rows.append(row.to_dict())
+                continue
+
+            date_str = date_obj.strftime("%m/%d/%Y")
+
+            if not validation.validate_date(date_str):
+                app.logger.warning(f"Date failed validation: {row.to_dict()}")
+                invalid_rows.append(row.to_dict())
+                continue
+
+            if not validation.validate_number(amount):
+                app.logger.warning(f"Amount failed validation: {row.to_dict()}")
+                invalid_rows.append(row.to_dict())
+
+        if invalid_rows:
+            return jsonify({"success": False, "error": "Invalid data in CSV"}), 400
+
+        # Format date for DB insert
+        df["transaction_date"] = df["transaction_date"].dt.strftime("%Y-%m-%d")
+
+        inserted_count = uploads_service.insert_unique_transactions(df)
+        app.logger.info(f"Inserted {inserted_count} new transactions")
+
+        return jsonify({"success": True, "inserted": inserted_count})
 
     except Exception as e:
         app.logger.error(f"Error processing CSV: {e}", exc_info=True)

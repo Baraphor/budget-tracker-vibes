@@ -24,7 +24,7 @@ def parse_uploaded_csv(file):
     # Convert date
     df["transaction_date"] = pd.to_datetime(
         df["transaction_date"], format="%m/%d/%Y", errors="coerce"
-    ).dt.strftime("%Y-%m-%d")
+    )
 
     return df
 
